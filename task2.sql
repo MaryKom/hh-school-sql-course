@@ -120,7 +120,7 @@ SELECT
 FROM test_data;
 
 
--- Генерирую 100 000 резюме
+---генератор 100 000 резюме
 WITH test_data AS (
     SELECT
         GENERATE_SERIES(1, 100000)          AS id,
