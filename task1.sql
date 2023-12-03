@@ -9,11 +9,11 @@ create table area (
 );
 
 create table job_seeker (
-    job_seeker_id       serial          PRIMARY KEY,
-    job_seeker_name     varchar(150)    NOT NULL,
-    job_seeker_age      integer         CHECK (job_seeker_age > 16 AND job_seeker_age < 100),
-    job_seeker_email    varchar(100)    NOT NULL UNIQUE,
-    area_id             integer         NOT NULL REFERENCES area(area_id)
+    job_seeker_id           serial          PRIMARY KEY,
+    job_seeker_name         varchar(150)    NOT NULL,
+    job_seeker_birthdate    date            CHECK (date_part('year',age(job_seeker_birthdate::date)) > 16 AND date_part('year',age(job_seeker_birthdate::date)) < 100),
+    job_seeker_email        varchar(100)    NOT NULL UNIQUE,
+    area_id                 integer         NOT NULL REFERENCES area(area_id)
 );
 
 create table resume (
@@ -22,6 +22,8 @@ create table resume (
     job_seeker_id       integer         NOT NULL REFERENCES job_seeker(job_seeker_id),
     compensation_from   integer,
     compensation_to     integer,
+    compensation_gross  boolean         DEFAULT FALSE NOT NULL,
+    visible             boolean         DEFAULT true NOT NULL,
     area_id             integer         NOT NULL REFERENCES area(area_id),
     specialization_id   integer         NOT NULL REFERENCES specialization(specialization_id),
     publication_time    timestamp       NOT NULL default CURRENT_TIMESTAMP
@@ -41,6 +43,8 @@ create table vacancy (
     description         text,
     compensation_from   integer,
     compensation_to     integer,
+    compensation_gross  boolean         DEFAULT FALSE NOT NULL,
+    visible             boolean         DEFAULT true NOT NULL,
     area_id             integer         NOT NULL REFERENCES area(area_id),
     specialization_id   integer         NOT NULL REFERENCES specialization(specialization_id),
     publication_time    timestamp       NOT NULL default CURRENT_TIMESTAMP

@@ -73,6 +73,8 @@ with test_data as (
         FLOOR(RANDOM() * 1000) + 1          AS employer_id,
         MD5(RANDOM()::TEXT)                 AS description,
         ROUND((RANDOM() * 100000)::int,-2)  AS compensation_from,
+        (random() > 0.5)                    AS compensation_gross,
+        (random() > 0.5)                    AS visible,
         FLOOR(RANDOM() * 16) + 1            AS area_id,
         FLOOR(RANDOM() * 29) + 1            AS specialization_id)
 insert into vacancy (vacancy_title,
@@ -80,6 +82,8 @@ insert into vacancy (vacancy_title,
                      description,
                      compensation_from,
                      compensation_to,
+                     compensation_gross,
+                     visible,
                      area_id,
                      specialization_id,
                      publication_time)
@@ -89,27 +93,29 @@ select
     description,
     compensation_from,
     compensation_from + ROUND((RANDOM() * 10000)::int, -2),
+    compensation_gross,
+    visible,
     area_id,
     specialization_id,
-    CURRENT_TIMESTAMP - RANDOM() * 360 * INTERVAL '1 day'
+    CURRENT_TIMESTAMP - RANDOM() * 720 * INTERVAL '1 day'
 from test_data;
 
 ---генератор 50 000 соискателей
-WITH test_data(id, job_seeker_name, job_seeker_age, area_id) AS (
+WITH test_data(id, job_seeker_name, job_seeker_birthdate, area_id) AS (
     SELECT
         GENERATE_SERIES(1, 50000) AS id,
         MD5(RANDOM()::TEXT)       AS job_seeker_name,
-        FLOOR(17 + RANDOM() * 83) AS job_seeker_age,
+        '1950-01-01'::date + trunc(random() * 366 * 53)::int AS job_seeker_birthdate,
         FLOOR(RANDOM() * 15) + 1  AS area_id
 )
 INSERT
 INTO job_seeker(job_seeker_name,
-                job_seeker_age,
+                job_seeker_birthdate,
                 job_seeker_email,
                 area_id)
 SELECT
     job_seeker_name,
-    job_seeker_age,
+    job_seeker_birthdate,
     'seeker' || id || '@' ||
     (case (random() * 2)::integer
          when 0 then 'gmail'
@@ -127,6 +133,8 @@ WITH test_data AS (
         MD5(RANDOM()::TEXT)                 AS resume_title,
         FLOOR(RANDOM() * 50000) + 1         AS job_seeker_id,
         ROUND((RANDOM() * 100000)::int,-2)  AS compensation_from,
+        (random() > 0.5)                    AS compensation_gross,
+        (random() > 0.5)                    AS visible,
         FLOOR(RANDOM() * 16) + 1            AS area_id,
         FLOOR(RANDOM() * 29) + 1            AS specialization_id
 )
@@ -135,6 +143,8 @@ INTO resume(resume_title,
             job_seeker_id,
             compensation_from,
             compensation_to,
+            compensation_gross,
+            visible,
             area_id,
             specialization_id,
             publication_time)
@@ -143,9 +153,11 @@ SELECT
     job_seeker_id,
     compensation_from,
     compensation_from + + ROUND((RANDOM() * 10000)::int, -2),
+    compensation_gross,
+    visible,
     area_id,
     specialization_id,
-    CURRENT_TIMESTAMP - RANDOM() * 360 * INTERVAL '1 day'
+    CURRENT_TIMESTAMP - RANDOM() * 720 * INTERVAL '1 day'
 FROM test_data;
 
 ---Генератор 100 000 откликов
