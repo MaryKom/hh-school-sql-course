@@ -54,5 +54,5 @@ create table response (
     resume_id       integer     NOT NULL REFERENCES resume(resume_id),
     vacancy_id      integer     NOT NULL REFERENCES vacancy(vacancy_id),
     response_time   timestamp   NOT NULL default CURRENT_TIMESTAMP,
-    primary key (resume_id, vacancy_id)
+    PRIMARY KEY (resume_id, vacancy_id)
 );
